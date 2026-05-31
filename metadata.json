@@ -1,0 +1,8 @@
+{
+  "name": "Remix: SPMB SDN 4 Kronggen",
+  "description": "Website Resmi Penerimaan Peserta Didik Baru (PPDB) SD Negeri 4 Kronggen Tahun Ajaran 2026/2027.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

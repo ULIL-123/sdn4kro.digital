@@ -1,0 +1,79 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Calon Siswa",
+      "description": "Data pendaftaran calon siswa baru",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "namaLengkap": { "type": "string" },
+        "nik": { "type": "string" },
+        "jenisKelamin": { "type": "string", "enum": ["L", "P"] },
+        "tempatLahir": { "type": "string" },
+        "tanggalLahir": { "type": "string" },
+        "nisn": { "type": "string" },
+        "alamatLengkap": { "type": "string" },
+        "rt": { "type": "string" },
+        "rw": { "type": "string" },
+        "desa": { "type": "string" },
+        "kecamatan": { "type": "string" },
+        "kabupaten": { "type": "string" },
+        "jarakKeSekolah": { "type": "number" },
+        "namaAyah": { "type": "string" },
+        "pekerjaanAyah": { "type": "string" },
+        "namaIbu": { "type": "string" },
+        "pekerjaanIbu": { "type": "string" },
+        "noHpOrangTua": { "type": "string" },
+        "jalur": { "type": "string", "enum": ["domisili", "afirmasi", "mutasi"] },
+        "usiaTahun": { "type": "number" },
+        "usiaBulan": { "type": "number" },
+        "hasAkta": { "type": "boolean" },
+        "hasKK": { "type": "boolean" },
+        "hasSPTJM": { "type": "boolean" },
+        "hasSKKB": { "type": "boolean" },
+        "tanggalDaftar": { "type": "string" },
+        "status": { "type": "string", "enum": ["Pending", "Terverifikasi", "Diterima", "Cadangan", "Gugur"] }
+      },
+      "required": ["id", "namaLengkap", "nik", "jenisKelamin", "tempatLahir", "tanggalLahir", "jalur", "status"]
+    },
+    "Kegiatan": {
+      "title": "Kegiatan Sekolah",
+      "description": "Data kegiatan dan praktik baik sekolah",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "judul": { "type": "string" },
+        "deskripsi": { "type": "string" },
+        "tanggalKegiatan": { "type": "string" },
+        "kategori": { "type": "string" },
+        "imageUrl": { "type": "string" }
+      },
+      "required": ["id", "judul", "deskripsi", "tanggalKegiatan", "kategori", "imageUrl"]
+    },
+    "LogoSetup": {
+      "title": "Logo Kustom",
+      "description": "Konfigurasi logo kustom sekolah dan dinas",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sdnLogo": { "type": "string" },
+        "dinasLogo": { "type": "string" }
+      },
+      "required": ["id"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Koleksi data pendaftaran calon siswa"
+    },
+    "/kegiatan/{kegiatanId}": {
+      "schema": "Kegiatan",
+      "description": "Koleksi data kegiatan sekolah"
+    },
+    "/logos/{logoId}": {
+      "schema": "LogoSetup",
+      "description": "Koleksi data konfigurasi logo kustom"
+    }
+  }
+}

@@ -1,0 +1,78 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: deny all by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reuseable primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Validation blueprints
+    function isValidStudent(data) {
+      return data.keys().hasAll(['id', 'namaLengkap', 'nik', 'jenisKelamin', 'tempatLahir', 'tanggalLahir', 'jalur', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.namaLengkap is string && data.namaLengkap.size() <= 500
+        && data.nik is string && data.nik.size() <= 50
+        && data.jenisKelamin is string && (data.jenisKelamin == 'L' || data.jenisKelamin == 'P')
+        && data.tempatLahir is string && data.tempatLahir.size() <= 200
+        && data.tanggalLahir is string && data.tanggalLahir.size() <= 50
+        && data.jalur is string && (data.jalur == 'domisili' || data.jalur == 'afirmasi' || data.jalur == 'mutasi')
+        && data.status is string && (data.status == 'Pending' || data.status == 'Terverifikasi' || data.status == 'Diterima' || data.status == 'Cadangan' || data.status == 'Gugur');
+    }
+
+    function isValidKegiatan(data) {
+      return data.keys().hasAll(['id', 'judul', 'deskripsi', 'tanggalKegiatan', 'kategori', 'imageUrl'])
+        && data.id is string && data.id.size() <= 128
+        && data.judul is string && data.judul.size() <= 500
+        && data.deskripsi is string && data.deskripsi.size() <= 10000
+        && data.tanggalKegiatan is string && data.tanggalKegiatan.size() <= 100
+        && data.kategori is string && data.kategori.size() <= 100
+        && data.imageUrl is string && data.imageUrl.size() <= 1000000;
+    }
+
+    function isValidLogoSetup(data) {
+      return (data.keys().hasAny(['sdnLogo']) ? (data.sdnLogo == null || data.sdnLogo is string) : true)
+        && (data.keys().hasAny(['dinasLogo']) ? (data.dinasLogo == null || data.dinasLogo is string) : true);
+    }
+
+    // Collection matches
+    match /students/{studentId} {
+      allow read: if true;
+      allow create: if isValidId(studentId) 
+        && isValidStudent(incoming()) 
+        && incoming().status == 'Pending';
+      allow update: if isValidId(studentId) && isValidStudent(incoming());
+      allow delete: if isValidId(studentId);
+    }
+
+    match /kegiatan/{kegiatanId} {
+      allow read: if true;
+      allow create, update: if isValidId(kegiatanId) 
+        && isValidKegiatan(incoming());
+      allow delete: if isValidId(kegiatanId);
+    }
+
+    match /logos/{logoId} {
+      allow read: if true;
+      allow create, update: if isValidId(logoId) 
+        && isValidLogoSetup(incoming());
+      allow delete: if isValidId(logoId);
+    }
+  }
+}
