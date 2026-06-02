@@ -55,8 +55,8 @@ export function subscribeStudentsRealtime(onUpdate: (students: CalonSiswa[]) => 
   const collectionRef = collection(db, 'students');
   return onSnapshot(collectionRef, (snapshot) => {
     if (snapshot.empty) {
-      console.log('Firestore students collection is empty. Displaying local mock registrations.');
-      onUpdate(MOCK_REGISTRATIONS);
+      console.log('Firestore students collection is empty.');
+      onUpdate([]);
     } else {
       const list: CalonSiswa[] = [];
       snapshot.forEach((d) => {

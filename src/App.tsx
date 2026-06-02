@@ -275,9 +275,20 @@ export default function App() {
   };
 
   const handleDeleteStudent = async (id: string, name: string) => {
-    await deleteStudentFromFirestore(id);
+    // 1. Immediately update local state & LocalStorage (Optimistic UI update)
+    const updated = students.filter(s => s.id !== id);
+    setStudents(updated);
+    saveRegistrations(updated);
+
     if (selectedStudentToPrint && selectedStudentToPrint.id === id) {
       setSelectedStudentToPrint(null);
+    }
+
+    // 2. Perform background delete from Firestore
+    try {
+      await deleteStudentFromFirestore(id);
+    } catch (e) {
+      console.error("Gagal menghapus siswa dari Firestore:", e);
     }
   };
 
